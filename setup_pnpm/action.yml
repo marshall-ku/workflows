@@ -1,9 +1,5 @@
 name: Setup pnpm
 description: Setting up pnpm for the project
-inputs:
-    runner:
-        description: Runner OS
-        required: true
 runs:
     using: composite
     steps:
@@ -25,8 +21,8 @@ runs:
         - uses: actions/cache@v3
           with:
               path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-              key: ${{ inputs.runner }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+              key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
               restore-keys: |
-                  ${{ inputs.runner }}-pnpm-store-
+                  ${{ runner.os }}-pnpm-store-
         - run: pnpm install --frozen-lockfile --strict-peer-dependencies
           shell: bash
