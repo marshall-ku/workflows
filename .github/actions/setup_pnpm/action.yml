@@ -5,8 +5,7 @@ on:
 
 jobs:
     run:
-        name: Setup pnpm
-        runs-on: ubuntu-latest
+        using: "composite"
         steps:
             - uses: actions/checkout@v3
               with:
@@ -16,21 +15,19 @@ jobs:
                   node-version: 20
                   check-latest: true
                   registry-url: https://registry.npmjs.org/
-            - name: Install pnpm
-              uses: pnpm/action-setup@v2
+            - uses: pnpm/action-setup@v2
               with:
                   version: 8
                   run_install: false
-            - name: Get pnpm store directory
+            - run: echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
               id: pnpm-cache
               shell: bash
-              run: echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+              shell: bash
             - uses: actions/cache@v3
-              name: Setup pnpm cache
               with:
                   path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
                   key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
                   restore-keys: |
                       ${{ runner.os }}-pnpm-store-
-            - name: Install dependencies
-              run: pnpm install --frozen-lockfile --strict-peer-dependencies
+            - run: pnpm install --frozen-lockfile --strict-peer-dependencies
+              shell: bash
