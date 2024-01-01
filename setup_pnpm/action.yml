@@ -22,7 +22,6 @@ jobs:
             - run: echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
               id: pnpm-cache
               shell: bash
-              shell: bash
             - uses: actions/cache@v3
               with:
                   path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
