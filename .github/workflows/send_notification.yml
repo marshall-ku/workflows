@@ -7,6 +7,16 @@ on:
                 description: "Status of job"
                 required: true
                 type: boolean
+            color:
+                description: "Color of embed"
+                required: false
+                type: string
+                default: ""
+            title:
+                description: "Title of embed"
+                required: false
+                type: string
+                default: ""
             message:
                 description: "Message to send"
                 required: false
@@ -23,37 +33,53 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Make curl request
+              shell: bash
               run: |
                   status=$([ "${{ inputs.succeed }}" == "true" ] && echo 'succeed' || echo 'failed')
-                  color=$([ "${{ inputs.succeed }}" == "true" ] && echo '5763719' || echo '16007990')
+
+                  default_color=$([ "${{ inputs.succeed }}" == "true" ] && echo '5763719' || echo '16007990')
+                  color=${{ inputs.color }}
+
+                  if [ -z "$color" ]; then
+                      color="$default_color"
+                  fi
+
+                  default_title=$([ "${{ inputs.succeed }}" == "true" ] && echo 'Workflow succeed' || echo 'Workflow failed')
+                  title=${{ inputs.title }}
+
+                  if [ -z "$title" ]; then
+                      title="$default_title"
+                  fi
+
                   json_payload=$(cat << EOF
                   {
                       "embeds": [
-                            {
-                                "type": "rich",
-                                "title": "Workflow $status",
-                                "description": "${{ inputs.message }}",
-                                "color": "$color",
-                                "fields": [
-                                    {
-                                    "name": "Ref",
-                                    "value": "${{ github.ref }}"
-                                    },
-                                    {
-                                    "name": "URL",
-                                    "value": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-                                    },
-                                    {
-                                    "name": "Event",
-                                    "value": "${{ github.event_name }}"
-                                    }
-                                ],
-                                "footer": {
-                                    "text": "${{ github.actor }}"
-                                }
-                            }
+                              {
+                                  "type": "rich",
+                                  "title": "$title",
+                                  "description": "${{ inputs.message }}",
+                                  "color": "$color",
+                                  "fields": [
+                                      {
+                                      "name": "Ref",
+                                      "value": "${{ github.ref }}"
+                                      },
+                                      {
+                                      "name": "URL",
+                                      "value": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                                      },
+                                      {
+                                      "name": "Event",
+                                      "value": "${{ github.event_name }}"
+                                      }
+                                  ],
+                                  "footer": {
+                                      "text": "${{ github.actor }}"
+                                  }
+                              }
                       ]
                   }
                   EOF
                   )
+
                   curl -H "Content-Type:application/json" -d "$json_payload" ${{ secrets.url }}
