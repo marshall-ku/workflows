@@ -38,14 +38,14 @@ jobs:
                   status=$([ "${{ inputs.succeed }}" == "true" ] && echo 'succeed' || echo 'failed')
 
                   default_color=$([ "${{ inputs.succeed }}" == "true" ] && echo '5763719' || echo '16007990')
-                  color=${{ inputs.color }}
+                  color="${{ inputs.color }}"
 
                   if [ -z "$color" ]; then
                       color="$default_color"
                   fi
 
                   default_title=$([ "${{ inputs.succeed }}" == "true" ] && echo 'Workflow succeed' || echo 'Workflow failed')
-                  title=${{ inputs.title }}
+                  title="${{ inputs.title }}"
 
                   if [ -z "$title" ]; then
                       title="$default_title"
