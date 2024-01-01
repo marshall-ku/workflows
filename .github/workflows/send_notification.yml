@@ -19,9 +19,11 @@ on:
 
 jobs:
     run:
-        using: "composite"
+        name: Send notification
+        runs-on: ubuntu-latest
         steps:
-            - run: |
+            - name: Make curl request
+              run: |
                   status=$([ "${{ inputs.status }}" == 'true' ] && echo 'failed' || echo 'succeeded')
                   color=$([ "${{ inputs.status }}" == 'true' ] && echo '16007990' || echo '5763719')
                   json_payload=$(cat << EOF
@@ -55,4 +57,3 @@ jobs:
                   EOF
                   )
                   curl -H "Content-Type:application/json" -d "$json_payload" ${{ secrets.url }}
-              shell: bash
