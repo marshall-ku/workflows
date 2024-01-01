@@ -2,6 +2,10 @@ name: Setup pnpm
 
 on:
     workflow_call:
+      inputs:
+        runner:
+          description: 'Runner OS'
+          required: true
 
 jobs:
     run:
