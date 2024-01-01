@@ -1,36 +1,32 @@
 name: Setup pnpm
-
-on:
-    workflow_call:
-      inputs:
-        runner:
-          description: 'Runner OS'
-          required: true
-
-jobs:
-    run:
-        using: "composite"
-        steps:
-            - uses: actions/checkout@v3
-              with:
-                  fetch-depth: 0
-            - uses: actions/setup-node@v3
-              with:
-                  node-version: 20
-                  check-latest: true
-                  registry-url: https://registry.npmjs.org/
-            - uses: pnpm/action-setup@v2
-              with:
-                  version: 8
-                  run_install: false
-            - run: echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-              id: pnpm-cache
-              shell: bash
-            - uses: actions/cache@v3
-              with:
-                  path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-                  key: ${{ inputs.runner }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-                  restore-keys: |
-                      ${{ inputs.runner }}-pnpm-store-
-            - run: pnpm install --frozen-lockfile --strict-peer-dependencies
-              shell: bash
+description: Setting up pnpm for the project
+inputs:
+    runner:
+        description: Runner OS
+        required: true
+runs:
+    using: composite
+    steps:
+        - uses: actions/checkout@v3
+          with:
+              fetch-depth: 0
+        - uses: actions/setup-node@v3
+          with:
+              node-version: 20
+              check-latest: true
+              registry-url: https://registry.npmjs.org/
+        - uses: pnpm/action-setup@v2
+          with:
+              version: 8
+              run_install: false
+        - run: echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+          id: pnpm-cache
+          shell: bash
+        - uses: actions/cache@v3
+          with:
+              path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+              key: ${{ inputs.runner }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+              restore-keys: |
+                  ${{ inputs.runner }}-pnpm-store-
+        - run: pnpm install --frozen-lockfile --strict-peer-dependencies
+          shell: bash
