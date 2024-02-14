@@ -28,13 +28,13 @@ runs:
     - uses: rickstaa/action-create-tag@v1
       id: create-tag
       with:
-          tag: ${{ input.tag }}
+          tag: ${{ inputs.tag }}
           tag_exists_error: true
-          message: ${{ input.tag }}
+          message: ${{ inputs.tag }}
     - name: Create a GitHub release
       uses: ncipollo/release-action@v1
       if: ${{ steps.create-tag.outputs.tag-exists == 'false' }}
       with:
-          tag: ${{ input.tag }}
-          name: ${{ input.tag }}
+          tag: ${{ inputs.tag }}
+          name: ${{ inputs.tag }}
           body: ${{ steps.generate-body.outputs.body }}
