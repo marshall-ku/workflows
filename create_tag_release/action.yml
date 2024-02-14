@@ -6,7 +6,7 @@ inputs:
 outputs:
   tag-exists:
     description: Whether tag exists
-    value: ${{ steps.create-tag.outputs.tag-exists }}
+    value: ${{ steps.create-tag.outputs.tag_exists }}
 runs:
   using: composite
   steps:
@@ -33,7 +33,7 @@ runs:
           message: ${{ inputs.tag }}
     - name: Create a GitHub release
       uses: ncipollo/release-action@v1
-      if: ${{ steps.create-tag.outputs.tag-exists == 'false' }}
+      if: ${{ steps.create-tag.outputs.tag_exists == 'false' }}
       with:
           tag: ${{ inputs.tag }}
           name: ${{ inputs.tag }}
