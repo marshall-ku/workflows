@@ -1,0 +1,20 @@
+name: Test
+
+on:
+    workflow_call:
+        inputs:
+            message:
+                description: "Message to send"
+                required: false
+                type: string
+                default: ""
+
+jobs:
+    run:
+        name: Send notification
+        runs-on: ubuntu-latest
+        steps:
+            - name: Make curl request
+              shell: bash
+              run: |
+                  echo "${{ inputs.message }}"
