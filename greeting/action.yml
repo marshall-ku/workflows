@@ -1,0 +1,23 @@
+name: My composite action
+description: My example composite action
+
+inputs:
+  name:
+    description: User name to greet
+    required: false
+    default: "Anonymous"
+
+outputs:
+  message:
+    description: Greeting message
+    value: ${{ steps.greeting.outputs.message }}
+
+runs:
+  using: composite
+  steps:
+    - name: Display greeting
+      id: greeting
+      shell: bash
+      run: |
+        message="Hello, ${{ inputs.name }}"
+        echo "message=$message" >> $GITHUB_OUTPUT
