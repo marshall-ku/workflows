@@ -21,3 +21,6 @@ runs:
       run: |
         message="Hello, ${{ inputs.name }}"
         echo "message=$message" >> $GITHUB_OUTPUT
+    - run: echo "WOW"
+      shell: bash
+      if: ${{ inputs.name == 'Marshall' }}
