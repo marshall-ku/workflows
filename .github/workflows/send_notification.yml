@@ -27,6 +27,9 @@ on:
         description: 'Webhook url'
         required: false
 
+env:
+  TEST: ${{ secrets.DISCORD_WEBHOOK_URL }}
+
 jobs:
   run:
     name: Send notification
@@ -87,7 +90,7 @@ jobs:
 
           url="${{ secrets.url }}"
           if [ -z "$url" ]; then
-              url="${{ secrets.DISCORD_WEBHOOK_URL }}"
+              url="${{ env.TEST }}"
           fi
 
           curl -H "Content-Type:application/json" -d "$json_payload" "$url"
