@@ -1,0 +1,70 @@
+name: Send discord notification
+
+on:
+  repository_dispatch:
+    types: ['send']
+
+jobs:
+  run:
+    name: Send notification
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo
+        shell: bash
+        run: echo "$PWD"
+      - name: Make curl request
+        shell: bash
+        run: |
+          status=$([ "${{ github.event.client_payload.succeed }}" == "true" ] && echo 'succeed' || echo 'failed')
+
+          default_color=$([ "${{ github.event.client_payload.succeed }}" == "true" ] && echo '5763719' || echo '16007990')
+          color="${{ github.event.client_payload.color }}"
+
+          if [ -z "$color" ]; then
+              color="$default_color"
+          fi
+
+          default_title=$([ "${{ github.event.client_payload.succeed }}" == "true" ] && echo 'Workflow succeed' || echo 'Workflow failed')
+          title="${{ github.event.client_payload.title }}"
+
+          if [ -z "$title" ]; then
+              title="$default_title"
+          fi
+
+          json_payload=$(cat << EOF
+          {
+              "embeds": [
+                      {
+                          "type": "rich",
+                          "title": "$title",
+                          "description": "${{ github.event.client_payload.message }}",
+                          "color": "$color",
+                          "fields": [
+                              {
+                              "name": "Ref",
+                              "value": "${{ github.ref }}"
+                              },
+                              {
+                              "name": "URL",
+                              "value": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                              },
+                              {
+                              "name": "Event",
+                              "value": "${{ github.event_name }}"
+                              }
+                          ],
+                          "footer": {
+                              "text": "${{ github.actor }}"
+                          }
+                      }
+              ]
+          }
+          EOF
+          )
+
+          url="${{ github.event.client_payload.url }}"
+          if [ -z "$url" ]; then
+              url="${{ secrets.DISCORD_WEBHOOK_URL }}"
+          fi
+
+          curl -H "Content-Type:application/json" -d "$json_payload" "$url"
