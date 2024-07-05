@@ -32,6 +32,9 @@ jobs:
     name: Send notification
     runs-on: ubuntu-latest
     steps:
+      - name: Cat
+        shell: bash
+        run: cat README.md
       - name: Make curl request
         shell: bash
         run: |
