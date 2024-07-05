@@ -90,7 +90,7 @@ jobs:
 
           url="${{ secrets.url }}"
           if [ -z "$url" ]; then
-              url="${{ env.TEST }}"
+              url="${{ secrets.DISCORD_WEBHOOK_URI }}"
           fi
 
           curl -H "Content-Type:application/json" -d "$json_payload" "$url"
