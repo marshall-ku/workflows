@@ -28,7 +28,7 @@ on:
         required: false
 
 env:
-  TEST: ${{ secrets.DISCORD_WEBHOOK_URL }}
+  TEST: ${{ secrets.DISCORD_WEBHOOK_URI }}
 
 jobs:
   run:
