@@ -90,4 +90,4 @@ jobs:
               url="${{ secrets.DISCORD_WEBHOOK_URL }}"
           fi
 
-          curl -H "Content-Type:application/json" -d "$json_payload" ${{ secrets.url }}
+          curl -H "Content-Type:application/json" -d "$json_payload" "$url"
