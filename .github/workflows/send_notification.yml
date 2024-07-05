@@ -32,9 +32,9 @@ jobs:
     name: Send notification
     runs-on: ubuntu-latest
     steps:
-      - name: Cat
+      - name: Echo
         shell: bash
-        run: cat README.md
+        run: echo "$PWD"
       - name: Make curl request
         shell: bash
         run: |
