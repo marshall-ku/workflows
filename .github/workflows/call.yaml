@@ -13,9 +13,6 @@ on:
         required: true
         type: string
 
-env:
-  TEST: ${{ secrets.DISCORD_WEBHOOK_URL }}
-
 jobs:
   run:
     name: Send notification
@@ -65,9 +62,4 @@ jobs:
           EOF
           )
 
-          url="${{ secrets.url }}"
-          if [ -z "$url" ]; then
-              url="${{ secrets.DISCORD_WEBHOOK_URL }}"
-          fi
-
-          curl -H "Content-Type:application/json" -d "$json_payload" "$url"
+          curl -H "Content-Type:application/json" -d "$json_payload" "${{ secrets.DISCORD_WEBHOOK_URL }}"
