@@ -1,44 +1,47 @@
 name: Send discord notification
 
 on:
-  repository_dispatch:
-    types: ['send']
+  workflow_call:
+    inputs:
+      title:
+        description: 'Title of embed'
+        required: false
+        type: string
+        default: ''
+      repository:
+        description: 'Repository'
+        required: true
+        type: string
+
+env:
+  TEST: ${{ secrets.DISCORD_WEBHOOK_URL }}
 
 jobs:
   run:
     name: Send notification
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.repository }}
       - name: Echo
         shell: bash
         run: echo "$PWD"
+      - name: Cat
+        shell: bash
+        run: cat README.md
       - name: Make curl request
         shell: bash
         run: |
-          status=$([ "${{ github.event.client_payload.succeed }}" == "true" ] && echo 'succeed' || echo 'failed')
-
-          default_color=$([ "${{ github.event.client_payload.succeed }}" == "true" ] && echo '5763719' || echo '16007990')
-          color="${{ github.event.client_payload.color }}"
-
-          if [ -z "$color" ]; then
-              color="$default_color"
-          fi
-
-          default_title=$([ "${{ github.event.client_payload.succeed }}" == "true" ] && echo 'Workflow succeed' || echo 'Workflow failed')
-          title="${{ github.event.client_payload.title }}"
-
-          if [ -z "$title" ]; then
-              title="$default_title"
-          fi
-
           json_payload=$(cat << EOF
           {
               "embeds": [
                       {
                           "type": "rich",
-                          "title": "$title",
-                          "description": "${{ github.event.client_payload.message }}",
-                          "color": "$color",
+                          "title": "Hello there",
+                          "description": "Testing workflow",
+                          "color": "5763719",
                           "fields": [
                               {
                               "name": "Ref",
@@ -62,7 +65,7 @@ jobs:
           EOF
           )
 
-          url="${{ github.event.client_payload.url }}"
+          url="${{ secrets.url }}"
           if [ -z "$url" ]; then
               url="${{ secrets.DISCORD_WEBHOOK_URL }}"
           fi
