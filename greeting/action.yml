@@ -11,6 +11,9 @@ outputs:
   message:
     description: Greeting message
     value: ${{ steps.greeting.outputs.message }}
+  version:
+    description: Version
+    value: ${{ steps.script.outputs.version }}
 
 runs:
   using: composite
@@ -24,3 +27,7 @@ runs:
     - run: echo "WOW"
       shell: bash
       if: ${{ inputs.name == 'Marshall' }}
+    - name: Run script
+      shell: bash
+      id: script
+      run: ${{ github.action_path }}/script.sh
