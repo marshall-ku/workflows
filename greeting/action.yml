@@ -30,4 +30,4 @@ runs:
     - name: Run script
       shell: bash
       id: script
-      run: ${{ github.action_path }}/script.sh
+      run: bash ${{ github.action_path }}/script.sh
